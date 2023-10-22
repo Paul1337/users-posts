@@ -1,53 +1,37 @@
 import UserCard from './components/UserCard/UserCard';
 import UserPosts from './components/UserPosts/UserPosts';
 import cls from './App.module.css';
-import { useEffect, useState } from 'react';
-import { getPosts } from './api/posts/getPosts';
-import { getUsers } from './api/users/getUsers';
-
-export type TPostsState = Array<any>;
-export type TUsersState = Array<TUsersState>;
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from './domain/store';
+import { IUser } from './domain/user/model';
 
 function App() {
-    const [posts, setPosts] = useState<TPostsState>([]);
-    const [users, setUsers] = useState<TUsersState>([]);
-    const [selectedUser, setSelectedUser] = useState<number>(-1);
-
-    useEffect(() => {
-        getUsers().then((users) => setUsers(users));
-    }, []);
-
-    useEffect(() => {
-        getPosts().then((posts) =>
-            setPosts(posts.filter((post) => post.userId === users[selectedUser].id))
-        );
-    }, [selectedUser]);
-
-    const handleUserCardClick = (ind: number) => {
-        setSelectedUser(ind);
-    };
+    const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
+    const posts = useSelector((state: RootState) => state.posts.posts);
+    const users = useSelector((state: RootState) => state.user.users);
 
     return (
         <div className={cls.App}>
             <div className={cls.usersCont}>
-                {users.map((user: any, ind: number) => (
+                {users.map((user: any) => (
                     <UserCard
-                        isSelected={selectedUser === ind}
+                        key={user.id}
+                        isSelected={selectedUser === user}
                         name={user.name}
-                        onClick={() => handleUserCardClick(ind)}
+                        onClick={() => setSelectedUser(user)}
                     />
                 ))}
             </div>
             <div className={cls.postsCont}>
-                {posts.length === 0 ? (
+                {!selectedUser ? (
                     <p>Выбери пользователя для просмотра его постов. Они отобразятся здесь</p>
                 ) : (
                     <>
                         <p>
-                            Посты для пользователя {users[selectedUser].name} (
-                            {users[selectedUser].username})
+                            Посты для пользователя {selectedUser?.name} ({selectedUser?.username})
                         </p>
-                        <UserPosts posts={posts} />
+                        <UserPosts userID={selectedUser?.id} posts={posts} />
                     </>
                 )}
             </div>

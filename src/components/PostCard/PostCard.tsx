@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import cls from './PostCard.module.css';
 
 export interface IPostCardProps {
