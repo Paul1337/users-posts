@@ -1,0 +1,17 @@
+.usersCont {
+    flex: 1;
+    height: 100vh;
+    overflow: auto;
+}
+
+.postsCont {
+    flex: 1;
+    height: 100vh;
+    overflow: auto;
+}
+
+.App {
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+}
